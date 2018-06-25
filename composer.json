@@ -1,5 +1,6 @@
 {
     "name": "likemarketing/auditor-lib",
+    "type": "library",
     "authors": [
         {
             "name": "Mikhail Noskov",
@@ -12,7 +13,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Likemarketing\\Auditor\\": "src"
+            "Mnoskov\\Auditor\\": "src"
         }
     }
 }
