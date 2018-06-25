@@ -1,0 +1,26 @@
+<table class="table table-bordered">
+    {% for campaignId, groups in errors %}
+        {% set campaign = campaigns.get(campaignId) %}
+
+        <tr>
+            <th colspan="4" class="text-xs-center">
+                Кампания "{{ campaign.Name }}"
+                <a href="https://direct.yandex.ru/registered/main.pl?cmd=showCamp&cid={{ campaign.Id }}" target="_blank">
+                    <i class="fa fa-external-link"></i>
+                </a>
+            </th>
+        </tr>
+
+        <tr>
+            <th>ID группы</th>
+            <th>Название группы</th>
+        </tr>
+
+        {% for group in groups %}
+            <tr>
+                <td>{{ group.Id }}</td>
+                <td>{{ group.Name }}</td>
+            </tr>
+        {% endfor %}
+    {% endfor %}
+</table>

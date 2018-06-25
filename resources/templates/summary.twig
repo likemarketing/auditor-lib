@@ -1,0 +1,31 @@
+{% spaceless %}
+    <table class="table table-bordered results">
+        {% for i, item in results %}
+            <tr>
+                <td class="{% if item.error %}danger{% else %}success{% endif %}">
+                    {{ item.description | raw }}<br>
+
+                    {% if item.error %}
+                        <i class="fa fa-times"></i>
+
+                        {% if item.error.modal %}
+                            <a href="#" data-toggle="modal" data-target="#result{{ i }}">{{ item.error.message }}</a>
+
+                            <div class="modal fade audition-details" tabindex="-1" role="dialog" id="result{{ i }}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        {{ item.error.modal | raw }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            {{ item.error.message }}
+                        {% endif %}
+                    {% else %}
+                        <i class="fa fa-check"></i>
+                    {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endspaceless %}

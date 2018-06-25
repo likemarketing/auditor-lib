@@ -1,0 +1,32 @@
+<table class="table table-bordered">
+    {% for campaignId, ads in errors %}
+        {% set campaign = campaigns.get(campaignId) %}
+
+        <tr>
+            <th colspan="4" class="text-xs-center">
+                Кампания "{{ campaign.Name }}"
+                <a href="https://direct.yandex.ru/registered/main.pl?cmd=showCamp&cid={{ campaign.Id }}" target="_blank">
+                    <i class="fa fa-external-link"></i>
+                </a>
+            </th>
+        </tr>
+
+        <tr>
+            <th>ID группы</th>
+            <th>Название группы</th>
+            <th>ID объявления</th>
+            <th>Заголовок объявления</th>
+        </tr>
+
+        {% for ad in ads %}
+            {% set group = groups.get(ad.AdGroupId) %}
+
+            <tr>
+                <td>{{ group.Id }}</td>
+                <td>{{ group.Name }}</td>
+                <td>{{ ad.Id }}</td>
+                <td>{{ ad.TextAd.Title }}</td>
+            </tr>
+        {% endfor %}
+    {% endfor %}
+</table>

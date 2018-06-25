@@ -1,0 +1,22 @@
+<table class="table table-bordered">
+    <tr>
+        <th colspan="4" class="text-xs-center">Кампании</th>
+    </tr>
+
+    <tr>
+        <th>ID кампании</th>
+        <th>Название кампании</th>
+    </tr>
+
+    {% for campaign in errors %}
+        <tr>
+            <td>{{ campaign.Id }}</td>
+            <td>
+                {{ campaign.Name }}
+                <a href="https://direct.yandex.ru/registered/main.pl?cmd=showCamp&cid={{ campaign.Id }}" target="_blank">
+                    <i class="fa fa-external-link"></i>
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
