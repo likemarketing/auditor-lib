@@ -1,6 +1,6 @@
 <?php
 
-namespace Bidder\Auditors;
+namespace Mnoskov\Auditor\Auditors;
 
 class MetrikaCounterAuditor extends Auditor
 {
@@ -20,7 +20,7 @@ class MetrikaCounterAuditor extends Auditor
             
             $this->result = [
                 'message' => 'В ' . $this->totalErrors . ' ' . \Decline($this->totalErrors, ['кампании', 'кампаниях', 'кампаниях']) . ' (' . $percent . '%) не указан счетчик Метрики',
-                'modal'   => $this->view->render('audit/campaigns_common.twig', [
+                'modal'   => $this->manager->render('campaigns_common.twig', [
                     'errors' => $this->errors,
                 ]),
             ];

@@ -1,31 +1,106 @@
 {% spaceless %}
+    <div class="audit-description">
+        Мы проанализировали вашу рекламную кампанию по {{ results.total }} {{ results.total | decline(['параметру', 'параметрам', 'параметрам']) }}.
+        Согластно нашим критериям она настроена
+
+        {% if results.errors < 1 %}
+            великолепно. Такие результаты получают около 7% проверенных рекламных кампаний.
+        {% elseif results.errors < 3 %}
+            отлично. В вашей кампании пройдены практически все тесты. Рекомендуем обратить внимание на наши комментарии ниже и сделать свою кампанию идеальной.
+        {% elseif results.errors < 7 %}
+            хорошо. Большая часть тестов пройдена успешно, но рекламные кампании требуют доработок. Рекомендации ниже помогут вам внести необходимые корректировки быстрее и не упустить важных моментов.
+        {% elseif results.errors < 11 %}
+            плохо. В рекламной кампании выявленно большое количество недочётов. Рекомендуем вам остановить рекламную кампанию до исправления большей части недочётов.
+        {% else %}
+            ужасно. Видимо это ваша первая рекламная кампания и вам необходимо подучиться настраивать контекстную рекламу.
+        {% endif %}
+    </div>
+
     <table class="table table-bordered results">
-        {% for i, item in results %}
+        {% for group in results.groups %}
             <tr>
-                <td class="{% if item.error %}danger{% else %}success{% endif %}">
-                    {{ item.description | raw }}<br>
+                <th>{{ group.model.title }}</th>
+            </tr>
 
-                    {% if item.error %}
-                        <i class="fa fa-times"></i>
+            {% for i, item in group.results %}
+                <tr>
+                    <td class="{% if item.isError %}danger{% else %}success{% endif %}">
+                        {{ item.model.description | raw }}
 
-                        {% if item.error.modal %}
-                            <a href="#" data-toggle="modal" data-target="#result{{ i }}">{{ item.error.message }}</a>
+                        {% if not item.isError %}
+                            <span class="toggle-explanation">
+                                <i class="fa fa-angle-down"></i>
+                            </span>
+                        {% endif %}
 
-                            <div class="modal fade audition-details" tabindex="-1" role="dialog" id="result{{ i }}">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        {{ item.error.modal | raw }}
+                        <br>
+
+                        {% if item.isError %}
+                            <i class="fa fa-times"></i>
+                        {% else %}
+                            <i class="fa fa-check"></i>
+                        {% endif %}
+
+                        {% if item.errors %}
+                            {% if item.errors.modal %}
+                                <a href="#" data-toggle="modal" data-target="#result{{ i }}">{{ item.errors.message }}</a>
+
+                                <div class="modal fade audition-details" tabindex="-1" role="dialog" id="result{{ i }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                                            <div class="modal-title">
+                                                {{ item.errors.message }}
+                                            </div>
+
+                                            <p class="explanation">
+                                                {{ item.model.explanation }}
+                                            </p>
+
+                                            {{ item.errors.modal | raw }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% else %}
-                            {{ item.error.message }}
+                            {% else %}
+                                {{ item.errors.message }}
+                            {% endif %}
                         {% endif %}
-                    {% else %}
-                        <i class="fa fa-check"></i>
-                    {% endif %}
-            </tr>
+
+                        <p class="explanation"{% if not item.isError %} style="display: none;"{% endif %}>
+                            {{ item.model.explanation }}
+                        </p>
+                </tr>
+            {% endfor %}
         {% endfor %}
     </table>
 {% endspaceless %}
+
+<style>
+    .modal.audition-details {}
+    .modal.audition-details .close { position: absolute; right: 0; top: 0; padding: 0.3rem 0.8rem; }
+    .modal.audition-details .modal-dialog { width: calc(100% - 60px); max-width: 1200px; }
+    .modal.audition-details .modal-content { padding: 3rem; }
+    .modal.audition-details table td { font-size: 0.75rem; padding: 0.4rem .75rem; }
+    .modal.audition-details table th { font-size: 0.875rem; }
+
+    .audition-page .results { border: 0; }
+    .audition-page .results > tbody > tr > td { position: relative; padding-left: 2rem; padding-right: 2rem; }
+    .audition-page .results > tbody > tr > td > .fa { position: absolute; left: 0.5rem; top: 0.9rem; }
+    .audition-page .results > tbody > tr > td > .explanation { padding: 0.5rem 0 0; font-size: 0.875rem; margin: 0; }
+    .audition-page .results > tbody > tr > td > .toggle-explanation { cursor: pointer; display: inline-block; padding: 0 0.5rem; font-size: 130%; line-height: 1; position: relative; top: 0.1rem; }
+    .audition-page .results > tbody > tr > th { border: 0; padding-left: 0; font: 1.25rem "YS Display"; }
+    .audition-page td.danger { background: #fff4f4; }
+    .audition-page td.danger > .fa { left: 0.6rem !important; color: #daa1a1; }
+    .audition-page td.success { background: #f6fff4; }
+    .audition-page td.success > .fa { color: #afd6b6; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        $('.toggle-explanation').click(function() {
+            $(this).siblings('.explanation').slideToggle(200);
+            $(this).remove();
+        });
+    });
+</script>

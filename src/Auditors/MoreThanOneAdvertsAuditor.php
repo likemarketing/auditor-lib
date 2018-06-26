@@ -1,6 +1,6 @@
 <?php
 
-namespace Bidder\Auditors;
+namespace Mnoskov\Auditor\Auditors;
 
 class MoreThanOneAdvertsAuditor extends Auditor
 {
@@ -42,7 +42,7 @@ class MoreThanOneAdvertsAuditor extends Auditor
             
             $this->result = [
                 'message' => $this->totalErrors . ' ' . \Decline($this->totalErrors, ['группа', 'группы', 'групп']) . ' объявлений (' . $percent . '%) ' . \Decline($this->totalErrors, ['имеет', 'имеют', 'имеют']) . '  меньше двух объявлений',
-                'modal'   => $this->view->render('audit/groups_common.twig', [
+                'modal'   => $this->manager->render('groups_common.twig', [
                     'errors'    => $this->errors,
                     'campaigns' => $campaigns,
                 ]),

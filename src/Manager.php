@@ -18,12 +18,17 @@ class Manager
     private $adGroups = null;
     private $ads = null;
     private $keywords = null;
+    private $errorsProcessor;
+    private $templatesLoader;
     
     public function __construct(Container $ci, \Twig_Environment $view)
     {
         $this->ci   = $ci;
         $this->api  = $ci->api;
         $this->view = $view;
+
+        $this->templatesLoader = new \Twig_Loader_Filesystem();
+        $this->templatesLoader->addPath(__DIR__ . '/../resources/templates');
     }
 
     public function getView()
@@ -36,15 +41,33 @@ class Manager
         return $this->client;
     }
 
+    public function setClient(Model $client)
+    {
+        $this->client = $client;
+        //$this->api->setTokenFromClient($client);
+    }
+
     public function getContainer()
     {
         return $this->ci;
     }
 
-    public function runTests(Model $client, array $classnames = [])
+    public function render($template, $data)
     {
-        $this->client = $client;
+        $loader = $this->view->getLoader();
+        $this->view->setLoader($this->templatesLoader);
+        $result = $this->view->render($template, $data);
+        $this->view->setLoader($loader);
+        return $result;
+    }
 
+    public function registerErrorsProcessor($processor)
+    {
+        $this->errorsProcessor = $processor;
+    }
+
+    public function runTests(array $classnames = [])
+    {
         $results = [
             'groups'  => [],
             'results' => [],
@@ -121,7 +144,7 @@ class Manager
 
     public function getResults()
     {
-        return $this->view->render('audit/summary.twig', [
+        return $this->render('summary.twig', [
             'results' => $this->runTests(),
         ]);
     }

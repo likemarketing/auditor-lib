@@ -3,7 +3,7 @@
 namespace Mnoskov\Auditor\Auditors;
 
 use Mnoskov\Auditor\Manager;
-use Mnoskov\Auditor\Models\Auditor;
+use Mnoskov\Auditor\Models\Auditor as Model;
 use Slim\Container;
 
 class Auditor
@@ -16,7 +16,7 @@ class Auditor
     protected $errors = [];
     protected $result = [];
 
-    public function __construct(Manager $manager, Auditor $model)
+    public function __construct(Manager $manager, Model $model)
     {
         $this->manager = $manager;
         $this->model   = $model;

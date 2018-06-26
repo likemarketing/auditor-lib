@@ -1,6 +1,6 @@
 <?php
 
-namespace Bidder\Auditors;
+namespace Mnoskov\Auditor\Auditors;
 
 class SearchNetworkSeparatedAuditor extends Auditor
 {
@@ -25,7 +25,7 @@ class SearchNetworkSeparatedAuditor extends Auditor
             
             $this->result = [
                 'message' => $this->totalErrors . ' ' . \Decline($this->totalErrors, ['кампания', 'кампании', 'кампаний']) . ' (' . $percent . '%) ' . \Decline($this->totalErrors, ['запущена', 'запущены', 'запущены']) . ' одновременно на поиск и в РСЯ',
-                'modal'   => $this->view->render('audit/campaigns_common.twig', [
+                'modal'   => $this->manager->render('campaigns_common.twig', [
                     'errors' => $this->errors,
                 ]),
             ];

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bidder\Auditors;
+namespace Mnoskov\Auditor\Auditors;
 
 class ImageTypesAuditor extends Auditor
 {
@@ -96,7 +96,7 @@ class ImageTypesAuditor extends Auditor
 
             $this->result = [
                 'message' => $this->totalErrors . ' ' . \Decline($this->totalErrors, ['группа', 'группы', 'групп']) . ' объявлений (' . $percent . '%) не ' . \Decline($this->totalErrors, ['имеет', 'имеют', 'имеют']) . ' стандартного или широкоформатого изображения',
-                'modal'   => $this->view->render('audit/groups_common.twig', [
+                'modal'   => $this->manager->render('groups_common.twig', [
                     'errors'    => $this->errors,
                     'campaigns' => $campaigns,
                 ]),

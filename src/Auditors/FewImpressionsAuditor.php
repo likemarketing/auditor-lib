@@ -1,6 +1,6 @@
 <?php
 
-namespace Bidder\Auditors;
+namespace Mnoskov\Auditor\Auditors;
 
 class FewImpressionsAuditor extends Auditor
 {
@@ -51,7 +51,7 @@ class FewImpressionsAuditor extends Auditor
             
             $this->result = [
                 'message' => $this->totalErrors . ' ' . \Decline($this->totalErrors, ['группа', 'группы', 'групп']) . ' объявлений (' . $percent . '%) ' . \Decline($this->totalErrors, ['имеет', 'имеют', 'имеют']) . '  статус "Мало показов"',
-                'modal'   => $this->view->render('audit/groups_common.twig', [
+                'modal'   => $this->manager->render('groups_common.twig', [
                     'errors'    => $this->errors,
                     'campaigns' => $campaigns,
                 ]),

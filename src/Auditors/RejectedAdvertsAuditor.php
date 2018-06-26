@@ -1,6 +1,6 @@
 <?php
 
-namespace Bidder\Auditors;
+namespace Mnoskov\Auditor\Auditors;
 
 class RejectedAdvertsAuditor extends Auditor
 {
@@ -33,7 +33,7 @@ class RejectedAdvertsAuditor extends Auditor
             
             $this->result = [
                 'message' => $this->totalErrors . ' ' . \Decline($this->totalErrors, ['отклоненное объявление', 'отклоненных объявления', 'отклоненных объявлений']) . ' (' . $percent . '%)',
-                'modal'   => $this->view->render('audit/ads_common.twig', [
+                'modal'   => $this->manager->render('ads_common.twig', [
                     'errors'    => $this->errors,
                     'groups'    => $groups,
                     'campaigns' => $campaigns,

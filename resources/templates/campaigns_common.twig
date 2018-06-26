@@ -13,7 +13,7 @@
             <td>{{ campaign.Id }}</td>
             <td>
                 {{ campaign.Name }}
-                <a href="https://direct.yandex.ru/registered/main.pl?cmd=showCamp&cid={{ campaign.Id }}" target="_blank">
+                <a href="https://direct.yandex.ru/registered/main.pl?cmd=showCamp&cid={{ campaign.Id }}&ulogin={{ client.login }}" target="_blank">
                     <i class="fa fa-external-link"></i>
                 </a>
             </td>

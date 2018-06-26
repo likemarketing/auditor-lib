@@ -49,7 +49,7 @@ class BidModifiersAuditor extends Auditor
                     $percent,
                     \Decline($this->totalErrors, ['использует', 'используют', 'используют']),
                 ]),
-                'modal' => $this->view->render('audit/campaigns_common.twig', [
+                'modal' => $this->manager->render('audit/campaigns_common.twig', [
                     'errors' => $this->errors,
                 ]),
             ];
