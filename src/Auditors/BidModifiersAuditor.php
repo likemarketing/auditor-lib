@@ -43,13 +43,8 @@ class BidModifiersAuditor extends Auditor
             $percent = ceil($this->totalErrors / $campaigns->count() * 100);
 
             $this->result = [
-                'message' => sprintf('%s %s (%s%) не %s корректировки ставок', [
-                    $this->totalErrors,
-                    \Decline($this->totalErrors, ['кампания', 'кампании', 'кампаний']),
-                    $percent,
-                    \Decline($this->totalErrors, ['использует', 'используют', 'используют']),
-                ]),
-                'modal' => $this->manager->render('audit/campaigns_common.twig', [
+                'message' => $this->totalErrors . ' ' . \Decline($this->totalErrors, ['кампания', 'кампании', 'кампаний']) . ' (' . $percent . '%) не ' . \Decline($this->totalErrors, ['использует', 'используют', 'используют']) . ' корректировки ставок',
+                'modal' => $this->manager->render('campaigns_common.twig', [
                     'errors' => $this->errors,
                 ]),
             ];
