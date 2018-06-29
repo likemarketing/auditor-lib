@@ -50,7 +50,7 @@ class ImageTypesAuditor extends Auditor
                 'FieldNames' => ['AdImageHash', 'Type'],
             ]);
 
-            if (!$api->isError()) {
+            if (!$api->isError() && !empty($data->AdImages)) {
                 foreach ($data->AdImages as $row) {
                     if (in_array($row->Type, ['REGULAR', 'WIDE'])) {
                         $hashes[$row->AdImageHash] = $row->Type;

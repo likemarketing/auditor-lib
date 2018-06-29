@@ -142,10 +142,14 @@ class Manager
         return $results;
     }
 
-    public function getResults()
+    public function getResults($tests = null)
     {
+         if (!$tests) {
+            $tests = $this->runTests();
+        }
+
         return $this->render('summary.twig', [
-            'results' => $this->runTests(),
+            'results' => $tests,
         ]);
     }
 
