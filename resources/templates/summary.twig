@@ -17,7 +17,7 @@
     </div>
 
     <table class="table table-bordered results">
-        {% for group in results.groups %}
+        {% for g, group in results.groups %}
             <tr>
                 <th>{{ group.model.title }}</th>
             </tr>
@@ -43,9 +43,9 @@
 
                         {% if item.errors %}
                             {% if item.errors.modal %}
-                                <a href="#" data-toggle="modal" data-target="#result{{ i }}">{{ item.errors.message }}</a>
+                                <a href="#" data-toggle="modal" data-target="#result{{ g }}_{{ i }}">{{ item.errors.message }}</a>
 
-                                <div class="modal fade audition-details" tabindex="-1" role="dialog" id="result{{ i }}">
+                                <div class="modal fade audition-details" tabindex="-1" role="dialog" id="result{{ g }}_{{ i }}">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
