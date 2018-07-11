@@ -14,6 +14,7 @@ class Manager
     private $ci;
     private $view;
     private $client;
+    private $settings = [];
     private $campaigns = null;
     private $adGroups = null;
     private $ads = null;
@@ -52,6 +53,16 @@ class Manager
         return $this->ci;
     }
 
+    public function setSettings(array $settings = [])
+    {
+        $this->settings = $settings;
+    }
+
+    public function getSettings()
+    {
+        return $this->settings;
+    }
+
     public function render($template, $data)
     {
         $loader = $this->view->getLoader();
@@ -76,19 +87,17 @@ class Manager
         $errors = 0;
         $total  = 0;
 
-        $mute = !is_null($this->ci->get('request')->getParam('mute'));
-
-        $groups = AuditorGroup::orderBy('sort')->with(['auditors' => function($query) use ($classnames) {
-            if (!empty($classnames)) {
-                $query->whereIn('class', $classnames);
+        $groups = AuditorGroup::orderBy('sort')->with(['auditors' => function($query) {
+            if (!empty($this->settings['classnames'])) {
+                $query->whereIn('class', $this->settings['classnames']);
             }
 
             return $query->orderBy('sort');
         }]);
 
-        if (!empty($classnames)) {
-            $groups->whereHas('auditors', function($query) use ($classnames) {
-                $query->whereIn('class', $classnames);
+        if (!empty($this->settings['classnames'])) {
+            $groups->whereHas('auditors', function($query) {
+                $query->whereIn('class', $this->settings['classnames']);
             });
         }
 
@@ -115,7 +124,7 @@ class Manager
 
                     $row['errors'] = $auditor->getResult();
 
-                    if (!$mute && !empty($row['isError']) && $model->critical && $this->errorsProcessor) {
+                    if (empty($this->settings['mute']) && !empty($row['isError']) && $model->critical && $this->errorsProcessor) {
                         call_user_func($this->errorsProcessor, $this, $row);
                     }
 
@@ -125,7 +134,7 @@ class Manager
             }
         }
 
-        if (empty($classnames)) {
+        if (empty($this->settings['classnames'])) {
             $percent = $total ? ceil($errors / $total * 100) : 0;
 
             $this->client->auditor_errors = $percent;
@@ -161,7 +170,7 @@ class Manager
             $raw = $this->api->getCampaigns([
                 'ClientLogin' => $this->client->login,
                 'SelectionCriteria' => [
-                    'States' => ['ON', 'OFF', 'ENDED', 'SUSPENDED'],
+                    'States' => !empty($this->settings['activeonly']) ? ['ON'] : ['ON', 'OFF', 'ENDED', 'SUSPENDED'],
                 ],
                 'FieldNames' => ['Id', 'Name', 'NegativeKeywords', 'State', 'Status', 'Type'],
                 'TextCampaignFieldNames' => ['CounterIds', 'RelevantKeywords', 'Settings', 'BiddingStrategy'],    
@@ -187,7 +196,7 @@ class Manager
                     'SelectionCriteria' => [
                         'CampaignIds' => $chunk->keys(),
                         'Types' => ['TEXT_AD'],
-                        'States' => ['OFF_BY_MONITORING', 'ON', 'OFF', 'SUSPENDED'],
+                        'States' => !empty($this->settings['activeonly']) ? ['ON'] : ['OFF_BY_MONITORING', 'ON', 'OFF', 'SUSPENDED'],
                     ],
                     'FieldNames' => ['Id', 'CampaignId', 'AdGroupId', 'State', 'Status', 'Type'],
                     'TextAdFieldNames' => ['Title', 'Title2', 'Text', 'Href', 'Mobile', 'VCardId', 'SitelinkSetId', 'AdImageHash', 'AdExtensions'],
