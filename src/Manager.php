@@ -79,6 +79,11 @@ class Manager
 
     public function runTests(array $classnames = [])
     {
+        $this->campaigns = null;
+        $this->adGroups  = null;
+        $this->ads       = null;
+        $this->keywords  = null;
+
         $results = [
             'groups'  => [],
             'results' => [],
