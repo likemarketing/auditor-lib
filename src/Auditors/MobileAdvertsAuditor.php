@@ -10,6 +10,10 @@ class MobileAdvertsAuditor extends Auditor
         $groups    = $this->manager->getAdGroups();
         $ads       = $this->manager->getAds();
 
+        $ads = $ads->filter(function($ad) {
+            return $ad->Type == 'TEXT_AD';
+        });
+
         $totalGroups = 0;
 
         foreach ($ads->groupBy('AdGroupId') as $groupId => $groupAds) {

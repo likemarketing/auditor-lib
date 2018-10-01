@@ -178,7 +178,9 @@ class Manager
                     'States' => !empty($this->settings['activeonly']) ? ['ON'] : ['ON', 'OFF', 'ENDED', 'SUSPENDED'],
                 ],
                 'FieldNames' => ['Id', 'Name', 'NegativeKeywords', 'State', 'Status', 'Type'],
-                'TextCampaignFieldNames' => ['CounterIds', 'RelevantKeywords', 'Settings', 'BiddingStrategy'],    
+                'TextCampaignFieldNames' => ['CounterIds', 'RelevantKeywords', 'Settings', 'BiddingStrategy'],
+                'DynamicTextCampaignFieldNames' => ['CounterIds', 'Settings', 'BiddingStrategy'],
+                'CpmBannerCampaignFieldNames' => ['CounterIds', 'Settings', 'BiddingStrategy'],
             ]);
 
             if (!$this->api->isError() && !empty($raw->Campaigns)) {
@@ -205,7 +207,9 @@ class Manager
                     ],
                     'FieldNames' => ['Id', 'CampaignId', 'AdGroupId', 'State', 'Status', 'Type'],
                     'TextAdFieldNames' => ['Title', 'Title2', 'Text', 'Href', 'Mobile', 'VCardId', 'SitelinkSetId', 'AdImageHash', 'AdExtensions'],
+                    'DynamicTextAdFieldNames' => ['Text', 'VCardId', 'VCardModeration', 'SitelinkSetId', 'SitelinksModeration', 'AdImageHash', 'AdImageModeration', 'AdExtensions'],
                     'TextImageAdFieldNames' => ['AdImageHash', 'Href'],
+                    'CpmBannerAdBuilderAdFieldNames' => ['Href'],
                 ]);
 
                 if (!$this->api->isError() && !empty($raw->Ads)) {
@@ -242,5 +246,33 @@ class Manager
         }
 
         return $this->adGroups;
+    }
+
+    public function getTypeFields($resource)
+    {
+        $type = strtolower($resource->Type);
+        $type = ucwords(str_replace('_', ' ', $type));
+        $type = str_replace(' ', '', $type);
+
+        if (isset($resource->{$type})) {
+            return $resource->{$type};
+        }
+
+        return null;
+    }
+
+    public function isSearchCampaign($campaign)
+    {
+        $fields = $this->getTypeFields($campaign);
+
+        if (!isset($fields->BiddingStrategy->Search->BiddingStrategyType)) {
+            return false;
+        }
+
+        if ($fields->BiddingStrategy->Search->BiddingStrategyType == 'SERVING_OFF') {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -17,13 +17,17 @@ class ExtensionsAuditor extends Auditor
             }
 
             foreach ($campaignAds as $ad) {
-                if (empty($ad->TextAd->AdExtensions)) {
-                    if (!isset($this->errors[$campaignId])) {
-                        $this->errors[$campaignId] = [];
-                    }
+                if (in_array($ad->Type, ['TEXT_AD', 'DYNAMIC_TEXT_AD'])) {
+                    $fields = $this->manager->getTypeFields($ad);
 
-                    $this->errors[$campaignId][] = $ad;
-                    $this->totalErrors++;
+                    if (empty($fields->AdExtensions)) {
+                        if (!isset($this->errors[$campaignId])) {
+                            $this->errors[$campaignId] = [];
+                        }
+
+                        $this->errors[$campaignId][] = $ad;
+                        $this->totalErrors++;
+                    }
                 }
             }
         }

@@ -17,7 +17,7 @@ class ImagesAuditor extends Auditor
             }
 
             foreach ($campaignAds as $ad) {
-                if (empty($ad->TextAd->AdImageHash)) {
+                if (!$this->hasHash($ad)) {
                     if (!isset($this->errors[$campaignId])) {
                         $this->errors[$campaignId] = [];
                     }
@@ -44,5 +44,15 @@ class ImagesAuditor extends Auditor
         }
 
         return true;
+    }
+
+    private function hasHash($ad)
+    {
+        if (!in_array($ad->Type, ['TEXT_AD', 'MOBILE_APP_AD', 'DYNAMIC_TEXT_AD', 'TEXT_IMAGE_AD', 'MOBILE_APP_IMAGE_AD'])) {
+            return true;
+        }
+
+        $fields = $this->manager->getTypeFields($ad);
+        return !empty($fields->AdImageHash);
     }
 }

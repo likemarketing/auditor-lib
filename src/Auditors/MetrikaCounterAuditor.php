@@ -9,7 +9,9 @@ class MetrikaCounterAuditor extends Auditor
         $campaigns = $this->manager->getCampaigns();
 
         foreach ($campaigns as $id => $campaign) {
-            if (empty($campaign->TextCampaign->CounterIds->Items)) {
+            $fields = $this->manager->getTypeFields($campaign);
+
+            if (empty($fields->CounterIds->Items)) {
                 $this->errors[] = $campaign;
                 $this->totalErrors++;
             }

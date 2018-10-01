@@ -17,13 +17,17 @@ class SiteLinksAuditor extends Auditor
             }
 
             foreach ($campaignAds as $ad) {
-                if (empty($ad->TextAd->SitelinkSetId)) {
-                    if (!isset($this->errors[$campaignId])) {
-                        $this->errors[$campaignId] = [];
-                    }
+                if (in_array($ad, ['TEXT_AD', 'DYNAMIC_TEXT_AD'])) {
+                    $fields = $this->manager->getTypeFields($ad);
 
-                    $this->errors[$campaignId][] = $ad;
-                    $this->totalErrors++;
+                    if (empty($fields->SitelinkSetId)) {
+                        if (!isset($this->errors[$campaignId])) {
+                            $this->errors[$campaignId] = [];
+                        }
+
+                        $this->errors[$campaignId][] = $ad;
+                        $this->totalErrors++;
+                    }
                 }
             }
         }

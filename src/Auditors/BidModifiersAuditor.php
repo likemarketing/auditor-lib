@@ -11,6 +11,10 @@ class BidModifiersAuditor extends Auditor
         $campaigns = $this->manager->getCampaigns();
         $api = $this->ci->api;
 
+        $campaigns = $campaigns->filter(function($campaign) {
+            return $campaign->Type != 'CPM_BANNER_CAMPAIGN';
+        });
+
         $modifiers = [];
 
         foreach ($campaigns->chunk(10) as $chunk) {

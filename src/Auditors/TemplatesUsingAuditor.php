@@ -18,11 +18,7 @@ class TemplatesUsingAuditor extends Auditor
 
             $campaign = $campaigns->get($campaignId);
 
-            if (isset($campaign->TextCampaign->BiddingStrategy->Search->BiddingStrategyType)) {
-                if ($campaign->TextCampaign->BiddingStrategy->Search->BiddingStrategyType == 'SERVING_OFF') {
-                    continue;
-                }
-
+            if ($this->manager->isSearchCampaign($campaign)) {
                 foreach ($campaignAds as $ad) {
                     if (substr_count($ad->TextAd->Title, '#') < 2) {
                         if (!isset($this->errors[$campaignId])) {

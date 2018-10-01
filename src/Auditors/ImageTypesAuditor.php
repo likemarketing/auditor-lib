@@ -26,12 +26,7 @@ class ImageTypesAuditor extends Auditor
 
             $campaign = $campaigns->get($campaignId);
 
-            if (isset($campaign->TextCampaign->BiddingStrategy->Network->BiddingStrategyType)) {
-                if ($campaign->TextCampaign->BiddingStrategy->Network->BiddingStrategyType == 'SERVING_OFF') {
-                    $groupedAds->forget($campaignId);
-                    continue;
-                }
-
+            if ($this->manager->isSearchCampaign($campaign)) {
                 foreach ($campaignAds as $ad) {
                     $hash = $this->getHash($ad);
                     if ($hash) {
@@ -112,10 +107,11 @@ class ImageTypesAuditor extends Auditor
     {
         $hash = null;
 
-        foreach (['TextAd', 'TextImageAd'] as $field) {
-            if (!empty($ad->{$field}->AdImageHash)) {
-                $hash = $ad->{$field}->AdImageHash;
-                break;
+        if (in_array($ad->Type, ['TEXT_AD', 'MOBILE_APP_AD', 'DYNAMIC_TEXT_AD', 'TEXT_IMAGE_AD', 'MOBILE_APP_IMAGE_AD'])) {
+            $fields = $this->manager->getTypeFields($ad);
+
+            if (!empty($fields->AdImageHash)) {
+                return $fields->AdImageHash;
             }
         }
 

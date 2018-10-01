@@ -9,7 +9,8 @@ class SearchNetworkSeparatedAuditor extends Auditor
         $campaigns = $this->manager->getCampaigns();
 
         foreach ($campaigns as $id => $campaign) {
-            $strategy = $campaign->TextCampaign->BiddingStrategy;
+            $fields   = $this->manager->getTypeFields($campaign);
+            $strategy = $fields->BiddingStrategy;
 
             $isSearch  = !empty($strategy->Search->BiddingStrategyType) && $strategy->Search->BiddingStrategyType != 'SERVING_OFF';
             $isNetwork = !empty($strategy->Network->BiddingStrategyType) && $strategy->Network->BiddingStrategyType != 'SERVING_OFF';

@@ -12,6 +12,10 @@ class SiteLinksDescriptionsAuditor extends Auditor
         $client    = $this->manager->getClient();
         $totalAds  = $ads->count();
 
+        $ads = $ads->filter(function($ad) {
+            return in_array($ad, ['TEXT_AD', 'DYNAMIC_TEXT_AD']);
+        });
+
         $groupedAds = $ads->groupBy('CampaignId');
 
         $api = $this->ci->api;
@@ -26,15 +30,12 @@ class SiteLinksDescriptionsAuditor extends Auditor
 
             $campaign = $campaigns->get($campaignId);
 
-            if (isset($campaign->TextCampaign->BiddingStrategy->Search->BiddingStrategyType)) {
-                if ($campaign->TextCampaign->BiddingStrategy->Search->BiddingStrategyType == 'SERVING_OFF') {
-                    $groupedAds->forget($campaignId);
-                    continue;
-                }
-
+            if ($this->manager->isSearchCampaign($campaign)) {
                 foreach ($campaignAds as $ad) {
-                    if (!empty($ad->TextAd->SitelinkSetId)) {
-                        $ids[$ad->Id] = $ad->TextAd->SitelinkSetId;
+                    $fields = $this->manager->getTypeFields($ad);
+
+                    if (!empty($fields->SitelinkSetId)) {
+                        $ids[$ad->Id] = $fields->SitelinkSetId;
                     }
                 }
             }

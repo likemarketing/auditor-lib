@@ -11,6 +11,10 @@ class SecondTitleAuditor extends Auditor
         $ads       = $this->manager->getAds();
         $totalAds  = $ads->count();
 
+        $ads = $ads->filter(function($ad) {
+            return $ad->Type == 'TEXT_AD';
+        });
+
         foreach ($ads->groupBy('CampaignId') as $campaignId => $campaignAds) {
             if (!$campaigns->has($campaignId)) {
                 continue;
@@ -18,11 +22,7 @@ class SecondTitleAuditor extends Auditor
 
             $campaign = $campaigns->get($campaignId);
 
-            if (isset($campaign->TextCampaign->BiddingStrategy->Search->BiddingStrategyType)) {
-                if ($campaign->TextCampaign->BiddingStrategy->Search->BiddingStrategyType == 'SERVING_OFF') {
-                    continue;
-                }
-
+            if ($this->manager->isSearchCampaign($campaign)) {
                 foreach ($campaignAds as $ad) {
                     if (empty($ad->TextAd->Title2)) {
                         if (!isset($this->errors[$campaignId])) {
