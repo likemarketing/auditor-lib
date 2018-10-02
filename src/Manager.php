@@ -250,7 +250,14 @@ class Manager
 
     public function getTypeFields($resource)
     {
-        $type = strtolower($resource->Type);
+        switch ($resource->Type) {
+            case 'DYNAMIC_TEXT_AD_GROUP': $type = 'DynamicText_' . $resource->Subtype . 'AdGroup'; break;
+            case 'CPM_BANNER_AD_GROUP':   $type = 'CpmBanner_' . $resource->Subtype . 'AdGroup'; break;
+            case 'CPM_BANNER_AD':         $type = 'CpmBannerAdBuilderAd'; break;
+            case 'IMAGE_AD':              $type = strtolower($resource->Subtype); break;
+            default:                      $type = strtolower($resource->Type);
+        }
+
         $type = ucwords(str_replace('_', ' ', $type));
         $type = str_replace(' ', '', $type);
 
