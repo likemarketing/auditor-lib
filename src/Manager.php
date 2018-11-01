@@ -282,4 +282,19 @@ class Manager
 
         return true;
     }
+
+    public function isNetworkCampaign($campaign)
+    {
+        $fields = $this->getTypeFields($campaign);
+
+        if (!isset($fields->BiddingStrategy->Network->BiddingStrategyType)) {
+            return false;
+        }
+
+        if ($fields->BiddingStrategy->Network->BiddingStrategyType == 'SERVING_OFF') {
+            return false;
+        }
+
+        return true;
+    }
 }

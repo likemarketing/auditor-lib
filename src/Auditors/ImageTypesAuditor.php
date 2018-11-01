@@ -26,7 +26,7 @@ class ImageTypesAuditor extends Auditor
 
             $campaign = $campaigns->get($campaignId);
 
-            if ($this->manager->isSearchCampaign($campaign)) {
+            if ($this->manager->isNetworkCampaign($campaign)) {
                 foreach ($campaignAds as $ad) {
                     $hash = $this->getHash($ad);
                     if ($hash) {
@@ -55,6 +55,12 @@ class ImageTypesAuditor extends Auditor
         }
 
         foreach ($groupedAds as $campaignId => $campaignAds) {
+            $campaign = $campaigns->get($campaignId);
+
+            if (!$this->manager->isNetworkCampaign($campaign)) {
+                continue;
+            }
+
             foreach ($campaignAds->groupBy('AdGroupId') as $groupId => $groupAds) {
                 if ($groups->has($groupId)) {
                     $group = $groups->get($groupId);
