@@ -206,7 +206,7 @@ class Manager
                         'States' => !empty($this->settings['activeonly']) ? ['ON'] : ['OFF_BY_MONITORING', 'ON', 'OFF', 'SUSPENDED'],
                     ],
                     'FieldNames' => ['Id', 'CampaignId', 'AdGroupId', 'State', 'Status', 'Type'],
-                    'TextAdFieldNames' => ['Title', 'Title2', 'Text', 'Href', 'Mobile', 'VCardId', 'SitelinkSetId', 'AdImageHash', 'AdExtensions'],
+                    'TextAdFieldNames' => ['Title', 'Title2', 'Text', 'Href', 'Mobile', 'VCardId', 'SitelinkSetId', 'AdImageHash', 'AdExtensions', 'DisplayUrlPath'],
                     'DynamicTextAdFieldNames' => ['Text', 'VCardId', 'VCardModeration', 'SitelinkSetId', 'SitelinksModeration', 'AdImageHash', 'AdImageModeration', 'AdExtensions'],
                     'TextImageAdFieldNames' => ['AdImageHash', 'Href'],
                     'CpmBannerAdBuilderAdFieldNames' => ['Href'],
