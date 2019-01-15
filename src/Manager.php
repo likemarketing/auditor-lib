@@ -21,6 +21,7 @@ class Manager
     private $keywords = null;
     private $errorsProcessor;
     private $templatesLoader;
+    private $cachedRequests = [];
     
     public function __construct(Container $ci, \Twig_Environment $view)
     {
@@ -246,6 +247,25 @@ class Manager
         }
 
         return $this->adGroups;
+    }
+
+    public function getCachedRequest($method, $params)
+    {
+        $key = md5(serialize($params));
+
+        if (isset($this->cachedRequests[$key])) {
+            return $this->cachedRequests[$key];
+        }
+
+        $api = $this->ci->api;
+        $result = call_user_func([$api, $method], $params);
+
+        if (!$api->isError()) {
+            $this->cachedRequests[$key] = $result;
+            return $result;
+        }
+
+        return [];
     }
 
     public function getTypeFields($resource)

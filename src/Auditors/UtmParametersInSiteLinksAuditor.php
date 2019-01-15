@@ -40,7 +40,7 @@ class UtmParametersInSiteLinksAuditor extends Auditor
         }
 
         foreach (array_chunk(array_values(array_unique($ids)), 10000, true) as $chunk) {
-            $data = $api->getSitelinks([
+            $data = $this->manager->getCachedRequest('getSitelinks', [
                 'ClientLogin' => $client->login,
                 'SelectionCriteria' => [
                     'Ids' => $chunk,
@@ -48,7 +48,7 @@ class UtmParametersInSiteLinksAuditor extends Auditor
                 'FieldNames' => ['Id', 'Sitelinks'],
             ]);
 
-            if (!$api->isError()) {
+            if (!empty($data->SitelinksSets)) {
                 foreach ($data->SitelinksSets as $row) {
                     $sets[$row->Id] = $row->Sitelinks;
                 }

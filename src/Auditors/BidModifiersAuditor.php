@@ -8,17 +8,14 @@ class BidModifiersAuditor extends Auditor
 {
     public function match() : bool
     {
-        $campaigns = $this->manager->getCampaigns();
-        $api = $this->ci->api;
-
-        $campaigns = $campaigns->filter(function($campaign) {
+        $campaigns = $this->manager->getCampaigns()->filter(function($campaign) {
             return $campaign->Type != 'CPM_BANNER_CAMPAIGN';
         });
 
         $modifiers = [];
 
         foreach ($campaigns->chunk(10) as $chunk) {
-            $raw = $api->getBidModifiers([
+            $raw = $this->manager->getCachedRequest('getBidModifiers', [
                 'ClientLogin' => $this->manager->getClient()->login,
                 'SelectionCriteria' => [
                     'CampaignIds' => $chunk->keys()->toArray(),
@@ -27,19 +24,17 @@ class BidModifiersAuditor extends Auditor
                 'FieldNames' => ['CampaignId'],
             ]);
 
-            if (!$api->isError() && isset($raw->BidModifiers)) {
+            if (isset($raw->BidModifiers)) {
                 $modifiers = array_merge($modifiers, $raw->BidModifiers);
             }
         }
         
-        if (!$api->isError() && isset($raw->BidModifiers)) {
-            $modifiers = array_flip((new Collection($modifiers))->pluck('CampaignId')->toArray());
+        $modifiers = array_flip((new Collection($modifiers))->pluck('CampaignId')->toArray());
 
-            foreach ($campaigns as $campaign) {
-                if (!array_key_exists($campaign->Id, $modifiers)) {
-                    $this->errors[] = $campaign;
-                    $this->totalErrors++;
-                }
+        foreach ($campaigns as $campaign) {
+            if (!array_key_exists($campaign->Id, $modifiers)) {
+                $this->errors[] = $campaign;
+                $this->totalErrors++;
             }
         }
 

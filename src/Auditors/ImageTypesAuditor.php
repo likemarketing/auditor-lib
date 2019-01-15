@@ -16,8 +16,6 @@ class ImageTypesAuditor extends Auditor
         $adsHashes   = [];
         $hashes      = [];
 
-        $api = $this->ci->api;
-
         foreach ($groupedAds as $campaignId => $campaignAds) {
             if (!$campaigns->has($campaignId)) {
                 $groupedAds->forget($campaignId);
@@ -37,7 +35,7 @@ class ImageTypesAuditor extends Auditor
         }
 
         foreach (array_chunk(array_values(array_unique($adsHashes)), 10000, true) as $hashGroup) {
-            $data = $api->getAdImages([
+            $data = $this->manager->getCachedRequest('getAdImages', [
                 'ClientLogin' => $client->login,
                 'SelectionCriteria' => [
                     'AdImageHashes' => $hashGroup,
@@ -45,7 +43,7 @@ class ImageTypesAuditor extends Auditor
                 'FieldNames' => ['AdImageHash', 'Type'],
             ]);
 
-            if (!$api->isError() && !empty($data->AdImages)) {
+            if (!empty($data->AdImages)) {
                 foreach ($data->AdImages as $row) {
                     if (in_array($row->Type, ['REGULAR', 'WIDE'])) {
                         $hashes[$row->AdImageHash] = $row->Type;
