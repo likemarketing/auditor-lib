@@ -18,7 +18,6 @@ class UtmParametersInSiteLinksAuditor extends Auditor
 
         $groupedAds = $ads->groupBy('CampaignId');
 
-        $api = $this->ci->api;
         $ids = [];
         $sets = [];
 
