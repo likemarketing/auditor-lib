@@ -13,7 +13,7 @@ class SiteLinksDescriptionsAuditor extends Auditor
         $totalAds  = $ads->count();
 
         $ads = $ads->filter(function($ad) {
-            return in_array($ad, ['TEXT_AD', 'DYNAMIC_TEXT_AD']);
+            return in_array($ad->Type, ['TEXT_AD', 'DYNAMIC_TEXT_AD']);
         });
 
         $groupedAds = $ads->groupBy('CampaignId');

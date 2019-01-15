@@ -17,7 +17,7 @@ class SiteLinksAuditor extends Auditor
             }
 
             foreach ($campaignAds as $ad) {
-                if (in_array($ad, ['TEXT_AD', 'DYNAMIC_TEXT_AD'])) {
+                if (in_array($ad->Type, ['TEXT_AD', 'DYNAMIC_TEXT_AD'])) {
                     $fields = $this->manager->getTypeFields($ad);
 
                     if (empty($fields->SitelinkSetId)) {
