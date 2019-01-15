@@ -19,7 +19,9 @@ class UtmParametersAuditor extends Auditor
             $campaign = $campaigns->get($campaignId);
 
             foreach ($campaignAds as $ad) {
-                if (strpos($ad->TextAd->Href, 'utm_') === false) {
+                $query = parse_url($ad->TextAd->Href, PHP_URL_QUERY);
+
+                if (is_null($query) || !is_null($query) && strpos($query, 'utm_') === false) {
                     if (!isset($this->errors[$campaignId])) {
                         $this->errors[$campaignId] = [];
                     }

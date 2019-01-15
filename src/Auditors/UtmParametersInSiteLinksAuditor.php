@@ -61,7 +61,9 @@ class UtmParametersInSiteLinksAuditor extends Auditor
                         $hasUtm = true;
 
                         foreach ($sets[$ids[$ad->Id]] as $set) {
-                            if (strpos($set->Href, 'utm_') === false) {
+                            $query = parse_url($set->Href, PHP_URL_QUERY);
+
+                            if (is_null($query) || !is_null($query) && strpos($query, 'utm_') === false) {
                                 $hasUtm = false;
                                 break;
                             }
