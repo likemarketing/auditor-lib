@@ -18,8 +18,7 @@ class SiteLinksDescriptionsAuditor extends Auditor
 
         $groupedAds = $ads->groupBy('CampaignId');
 
-        $ids = [];
-        $sets = [];
+        $ids = $sets = [];
 
         foreach ($groupedAds as $campaignId => $campaignAds) {
             if (!$campaigns->has($campaignId)) {
@@ -29,13 +28,16 @@ class SiteLinksDescriptionsAuditor extends Auditor
 
             $campaign = $campaigns->get($campaignId);
 
-            if ($this->manager->isSearchCampaign($campaign)) {
-                foreach ($campaignAds as $ad) {
-                    $fields = $this->manager->getTypeFields($ad);
+            if (!$this->manager->isSearchCampaign($campaign)) {
+                $groupedAds->forget($campaignId);
+                continue;
+            }
 
-                    if (!empty($fields->SitelinkSetId)) {
-                        $ids[$ad->Id] = $fields->SitelinkSetId;
-                    }
+            foreach ($campaignAds as $ad) {
+                $fields = $this->manager->getTypeFields($ad);
+
+                if (!empty($fields->SitelinkSetId)) {
+                    $ids[$ad->Id] = $fields->SitelinkSetId;
                 }
             }
         }
