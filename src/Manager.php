@@ -78,6 +78,11 @@ class Manager
         $this->errorsProcessor = $processor;
     }
 
+    public function getErrorsProcessor()
+    {
+        return $this->errorsProcessor;
+    }
+
     public function runTests(array $classnames = [])
     {
         $this->campaigns = null;
