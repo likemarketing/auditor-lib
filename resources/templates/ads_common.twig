@@ -5,7 +5,7 @@
         <tr>
             <th colspan="4" class="text-xs-center">
                 Кампания "{{ campaign.Name }}"
-                <a href="https://direct.yandex.ru/registered/main.pl?cmd=showCamp&cid={{ campaign.Id }}&ulogin={{ client.login }}" target="_blank">
+                <a href="https://direct.yandex.ru/registered/main.pl?cmd=showCamp&cid={{ campaign.Id }}&ulogin={{ client.login }}#{{ group.Id }}" target="_blank">
                     <i class="fa fa-external-link"></i>
                 </a>
             </th>
@@ -22,7 +22,12 @@
             {% set group = groups.get(ad.AdGroupId) %}
 
             <tr>
-                <td>{{ group.Id }}</td>
+                <td>
+                    {{ group.Id }}
+                    <a href="https://direct.yandex.ru/registered/main.pl?cmd=showCamp&cid={{ campaign.Id }}&ulogin={{ client.login }}#{{ group.Id }}" target="_blank">
+                        <i class="fa fa-external-link"></i>
+                    </a>
+                </td>
                 <td>{{ group.Name }}</td>
                 <td>{{ ad.Id }}</td>
                 <td>{{ ad.TextAd.Title }}</td>

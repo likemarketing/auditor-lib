@@ -18,7 +18,12 @@
 
         {% for group in groups %}
             <tr>
-                <td>{{ group.Id }}</td>
+                <td>
+                    {{ group.Id }}
+                    <a href="https://direct.yandex.ru/registered/main.pl?cmd=showCamp&cid={{ campaign.Id }}&ulogin={{ client.login }}#{{ group.Id }}" target="_blank">
+                        <i class="fa fa-external-link"></i>
+                    </a>
+                </td>
                 <td>{{ group.Name }}</td>
             </tr>
         {% endfor %}
