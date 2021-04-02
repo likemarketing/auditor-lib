@@ -22,7 +22,7 @@ class Manager
     private $errorsProcessor;
     private $templatesLoader;
     private $cachedRequests = [];
-    
+
     public function __construct(Container $ci, \Twig_Environment $view)
     {
         $this->ci   = $ci;
@@ -95,24 +95,23 @@ class Manager
             'results' => [],
         ];
 
-        $errors = 0;
-        $total  = 0;
+        $errors   = 0;
+        $critical = 0;
+        $total    = 0;
 
-        $groups = AuditorGroup::orderBy('sort')->with(['auditors' => function($query) {
-            if (!empty($this->settings['classnames'])) {
-                $query->whereIn('class', $this->settings['classnames']);
-            }
+        $groups = AuditorGroup::query()
+            ->orderBy('sort')
+            ->with(['auditors' => function($query) {
+                return $query->orderBy('sort');
+            }])
+            ->when(!empty($this->settings['classnames']), function($query) {
+                return $query->whereHas('auditors', function($query) {
+                    $query->whereIn('class', $this->settings['classnames']);
+                });
+            })
+            ->get();
 
-            return $query->orderBy('sort');
-        }]);
-
-        if (!empty($this->settings['classnames'])) {
-            $groups->whereHas('auditors', function($query) {
-                $query->whereIn('class', $this->settings['classnames']);
-            });
-        }
-
-        foreach ($groups->get() as $group) {
+        foreach ($groups as $group) {
             $results['groups'][$group->id] = [
                 'model'   => $group,
                 'results' => [],
@@ -131,6 +130,10 @@ class Manager
                     if (!$auditor->match()) {
                         $row['isError'] = true;
                         $errors++;
+
+                        if ($model->critical) {
+                            $critical++;
+                        }
                     }
 
                     $row['errors'] = $auditor->getResult();
@@ -156,8 +159,14 @@ class Manager
 
         $this->client->save();
 
-        $results['total']  = $total;
-        $results['errors'] = $errors;
+        $results['total']    = $total;
+        $results['errors']   = $errors;
+        $results['critical'] = $critical;
+        $results['stats']    = [
+            'campaigns' => $this->campaigns->count(),
+            'adgroups'  => $this->adGroups->count(),
+            'ads'       => $this->ads->count(),
+        ];
 
         return $results;
     }
@@ -187,6 +196,8 @@ class Manager
                 'TextCampaignFieldNames' => ['CounterIds', 'RelevantKeywords', 'Settings', 'BiddingStrategy'],
                 'DynamicTextCampaignFieldNames' => ['CounterIds', 'Settings', 'BiddingStrategy'],
                 'CpmBannerCampaignFieldNames' => ['CounterIds', 'Settings', 'BiddingStrategy'],
+                'MobileAppCampaignFieldNames' => ['Settings', 'BiddingStrategy'],
+                'SmartCampaignFieldNames' => ['CounterId', 'Settings', 'BiddingStrategy'],
             ]);
 
             if (!$this->api->isError() && !empty($raw->Campaigns)) {
