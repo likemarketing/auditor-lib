@@ -193,11 +193,11 @@ class Manager
                     'States' => !empty($this->settings['activeonly']) ? ['ON'] : ['ON', 'OFF', 'ENDED', 'SUSPENDED'],
                 ],
                 'FieldNames' => ['Id', 'Name', 'NegativeKeywords', 'State', 'Status', 'Type'],
-                'TextCampaignFieldNames' => ['CounterIds', 'RelevantKeywords', 'Settings', 'BiddingStrategy'],
-                'DynamicTextCampaignFieldNames' => ['CounterIds', 'Settings', 'BiddingStrategy'],
+                'TextCampaignFieldNames' => ['CounterIds', 'RelevantKeywords', 'Settings', 'BiddingStrategy', 'PriorityGoals'],
+                'DynamicTextCampaignFieldNames' => ['CounterIds', 'Settings', 'BiddingStrategy', 'PriorityGoals'],
                 'CpmBannerCampaignFieldNames' => ['CounterIds', 'Settings', 'BiddingStrategy'],
                 'MobileAppCampaignFieldNames' => ['Settings', 'BiddingStrategy'],
-                'SmartCampaignFieldNames' => ['CounterId', 'Settings', 'BiddingStrategy'],
+                'SmartCampaignFieldNames' => ['CounterId', 'Settings', 'BiddingStrategy', 'PriorityGoals'],
             ]);
 
             if (!$this->api->isError() && !empty($raw->Campaigns)) {
