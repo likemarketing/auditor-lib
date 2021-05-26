@@ -1,8 +1,6 @@
 <?php
 
-
-use Mnoskov\Auditor\Models\Auditor;
-use Mnoskov\Auditor\Models\AuditorGroup;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use Phinx\Seed\AbstractSeed;
 
 class MustHavePriorityGoalsAuditor extends AbstractSeed
@@ -17,9 +15,9 @@ class MustHavePriorityGoalsAuditor extends AbstractSeed
      */
     public function run()
     {
-        $groups = AuditorGroup::all()->pluck('id', 'title');
+        $groups = Capsule::table('auditor_groups')->get()->pluck('id', 'title');
 
-        Auditor::updateOrCreate([
+        Capsule::table('auditors')->updateOrInsert([
             'class' => 'MustHavePriorityGoals',
         ], [
             'group_id'    => $groups['Кампании'],
