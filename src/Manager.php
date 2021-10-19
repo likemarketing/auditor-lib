@@ -187,11 +187,25 @@ class Manager
         if (is_null($this->campaigns)) {
             $this->campaigns = new Collection([]);
 
+            $criteria = [
+                'States' => ['ON', 'OFF', 'ENDED', 'SUSPENDED'],
+            ];
+
+            if (isset($this->settings['states'])) {
+                $criteria['States'] = $this->settings['states'];
+            }
+
+            if (!empty($this->settings['activeonly'])) {
+                $criteria['States'] = ['ON'];
+            }
+
+            if (isset($this->settings['statuses'])) {
+                $criteria['Statuses'] = $this->settings['statuses'];
+            }
+
             $raw = $this->api->getCampaigns([
                 'ClientLogin' => $this->client->login,
-                'SelectionCriteria' => [
-                    'States' => !empty($this->settings['activeonly']) ? ['ON'] : ['ON', 'OFF', 'ENDED', 'SUSPENDED'],
-                ],
+                'SelectionCriteria' => $criteria,
                 'FieldNames' => ['Id', 'Name', 'NegativeKeywords', 'State', 'Status', 'Type'],
                 'TextCampaignFieldNames' => ['CounterIds', 'RelevantKeywords', 'Settings', 'BiddingStrategy', 'PriorityGoals'],
                 'DynamicTextCampaignFieldNames' => ['CounterIds', 'Settings', 'BiddingStrategy', 'PriorityGoals'],
